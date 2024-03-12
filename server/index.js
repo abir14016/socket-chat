@@ -1,19 +1,16 @@
-import express from "express";
+const express = require("express");
 const app = express();
-import { createServer } from "http";
-
-const { Server } = require("socket.io");
-
+const http = require("http");
 require('dotenv').config()
 const port = process.env.PORT || 3001;
 
+const { Server } = require("socket.io");
+
 //using cors middleware to avoid conflicts between server and client
-import cors from "cors";
+const cors = require("cors");
 app.use(cors());
 
-
-
-const server = createServer(app);
+const server = http.createServer(app);
 
 // new instance of Server with solving cors issues
 const io = new Server(server, {
