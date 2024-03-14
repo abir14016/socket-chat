@@ -1,20 +1,16 @@
 import './App.css';
 import io from "socket.io-client";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const socket = io.connect("http://localhost:3001");
 
 function App() {
-  const [userName, setUserName] = useState("");
-  const [room, setRoom] = useState("");
+  const { register, formState: { errors }, handleSubmit, reset } = useForm();
 
-  const joinRoom = () => {
-    if (userName === "") {
-
-    }
-    if (userName !== "" && room !== "") {
-      socket.emit("join_room", room);
-    }
+  const onSubmit = (data) => {
+    socket.emit("join_room", data.room);
+    reset();
   }
 
   return (
@@ -24,25 +20,56 @@ function App() {
           <div className="card-body">
             <h2 className="card-title">Join a chat!</h2>
 
-            {/* input */}
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text text-white">Enter Your Name</span>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* userName field */}
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text text-white">Enter Your Name</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your Name..."
+                  className="text-black input input-bordered w-full max-w-xs"
+                  {...register("userName", {
+                    required: {
+                      value: true,
+                      message: 'you must provide your name'
+                    }
+                  })}
+                />
+                <label className="label">
+                  {errors.userName?.type === 'required' && <span className="label-text-alt text-error">{errors.userName.message}</span>}
+                </label>
               </div>
-              <input onChange={(event) => setUserName(event.target.value)} type="text" placeholder="Type here..." className="text-black input input-bordered w-full max-w-xs" />
-            </label>
+              {/* userName field */}
 
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text text-white">Enter Room ID</span>
+              {/* room field */}
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text text-white">Enter Room ID</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Room ID..."
+                  className="text-black input input-bordered w-full max-w-xs"
+                  {...register("room", {
+                    required: {
+                      value: true,
+                      message: 'you must provide a room'
+                    }
+                  })}
+                />
+                <label className="label">
+                  {errors.room?.type === 'required' && <span className="label-text-alt text-error">{errors.room.message}</span>}
+                </label>
               </div>
-              <input onChange={(event) => setRoom(event.target.value)} type="text" placeholder="Type here..." className="text-black input input-bordered w-full max-w-xs" />
-            </label>
-            {/* input */}
+              {/* room field */}
 
-            <div className="card-actions justify-end">
-              <button onClick={joinRoom} className="btn btn-outline btn-secondary">Join a room</button>
-            </div>
+              <div className="card-actions justify-end">
+                <input className="btn btn-outline btn-secondary" type="submit" value="Join a room" />
+              </div>
+            </form>
+
           </div>
         </div>
       </div>
