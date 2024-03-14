@@ -1,15 +1,20 @@
 import './App.css';
 import io from "socket.io-client";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useState } from "react"; // Import useState
+import Chat from './Chat';
 
 const socket = io.connect("http://localhost:3001");
 
 function App() {
   const { register, formState: { errors }, handleSubmit, reset } = useForm();
+  const [userName, setUserName] = useState(""); // State for userName
+  const [room, setRoom] = useState(""); // State for room
 
   const onSubmit = (data) => {
     socket.emit("join_room", data.room);
+    setUserName(data.userName); // Set userName state
+    setRoom(data.room); // Set room state
     reset();
   }
 
@@ -73,6 +78,7 @@ function App() {
           </div>
         </div>
       </div>
+      <Chat socket={socket} userName={userName} room={room} />
     </div>
   );
 }
