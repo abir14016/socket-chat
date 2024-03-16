@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 
 const Chat = ({ socket, userName, room }) => {
@@ -11,10 +11,18 @@ const Chat = ({ socket, userName, room }) => {
                 message: currentMessage,
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
             }
-
+            //message sent to the backend
             await socket.emit("send_message", messageData);
         }
     }
+
+    useEffect(() => {
+        socket.on("receive_message", (data) => {
+            //listening event that emitted from backend
+            console.log(data);
+        })
+    }, [socket])
+
     return (
         <div className="card w-96 bg-primary text-primary-content">
             <div className="card-body">
