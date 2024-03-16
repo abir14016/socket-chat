@@ -1,5 +1,10 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+library.add(fab, faPaperPlane)
 
 const Chat = ({ socket, userName, room }) => {
     const [currentMessage, setCurrentMessage] = useState("");
@@ -27,29 +32,34 @@ const Chat = ({ socket, userName, room }) => {
 
     return (
         <div className="flex justify-center items-center h-screen">
-            <div className="card w-96 bg-primary text-primary-content">
-                <div className="card-body">
-                    <h2 className="card-title">Live Chat</h2>
+            <div className='border-2 w-1/4 h-2/3 flex flex-col rounded-xl'>
+                <div className='bg-neutral p-3 rounded-t-xl rounded-b-none'>
+                    <h2 className='text-white font-bold text-2xl'>Live Chat</h2>
+                </div>
+                <div className="flex-1 overflow-y-auto">
                     {
-                        messageList.map((messageContent) => {
-                            return <p>{messageContent.message}</p>
+                        messageList.map((messageContent, index) => {
+                            return <div className="chat chat-start">
+                                <div className="chat-bubble chat-bubble-primary">{messageContent.message}</div>
+                            </div>
                         })
                     }
-                    <div className="card-actions justify-center">
-                        <label className="input input-bordered flex justify-between items-center gap-2">
-                            <input
-                                onChange={(event) => { setCurrentMessage(event.target.value) }}
-                                type="text"
-                                className="grow text-black"
-                                placeholder="Type Here..." />
-                            <button
-                                onClick={sendMessage}
-                                className="btn">&#9658;</button>
-                        </label>
-                    </div>
+                </div>
+                <div>
+                    <label className="input input-bordered border-t-2 flex justify-between items-center rounded-t-none">
+                        <input
+                            onChange={(event) => { setCurrentMessage(event.target.value) }}
+                            type="text"
+                            className="text-black"
+                            placeholder="Type Here..." />
+                        <button onClick={sendMessage} className="btn btn-square -mr-4 rounded-t-none rounded-bl-none">
+                            <FontAwesomeIcon icon={faPaperPlane} />
+                        </button>
+                    </label>
                 </div>
             </div>
         </div>
+
     );
 };
 
