@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 library.add(fab, faPaperPlane)
 
@@ -20,6 +21,8 @@ const Chat = ({ socket, userName, room }) => {
             }
             //message sent to the backend
             await socket.emit("send_message", messageData);
+            setMessageList((list) => [...list, messageData]);
+            setCurrentMessage("");
         }
     }
 
@@ -32,26 +35,42 @@ const Chat = ({ socket, userName, room }) => {
 
     return (
         <div className="flex justify-center items-center h-screen">
-            <div className='border-2 w-1/4 h-2/3 flex flex-col rounded-xl'>
-                <div className='bg-neutral p-3 rounded-t-xl rounded-b-none'>
+            <div className='border-2 w-full md:w-1/2 lg:w-1/5 h-full md:h-2/3 lg:h-2/3 flex flex-col rounded-xl'>
+                <div className='bg-neutral p-3 rounded-t-xl rounded-b-none relative'>
                     <h2 className='text-white font-bold text-2xl'>Live Chat</h2>
+                    <div className="absolute top-0 right-0 mt-2 mr-2">
+                        <div className="badge badge-info">room: {room}</div>
+                    </div>
                 </div>
-                <div className="flex-1 overflow-y-auto">
-                    {
-                        messageList.map((messageContent, index) => {
-                            return <div className="chat chat-start">
-                                <div className="chat-bubble chat-bubble-primary">{messageContent.message}</div>
+                <ScrollToBottom className="flex-1 overflow-y-auto">
+                    {messageList.map((messageContent, index) => {
+                        const isCurrentUser = messageContent.author === userName;
+                        const chatClass = isCurrentUser ? "chat chat-end" : "chat chat-start";
+                        const bubbleClass = isCurrentUser ? "chat-bubble bg-blue-600 max-w-48 overflow-hidden break-all" : "chat-bubble bg-gray-300 max-w-48 text-black overflow-hidden break-all";
+
+                        return (
+                            <div className={chatClass} key={index}>
+                                <div className={bubbleClass}>{messageContent.message}</div>
+                                <div className="chat-footer font-bold opacity-50">
+                                    {messageContent.author}
+                                    <time className="text-xs opacity-50 ml-1">{messageContent.time}</time>
+                                </div>
                             </div>
-                        })
-                    }
-                </div>
+                        );
+                    })}
+                </ScrollToBottom>
                 <div>
                     <label className="input input-bordered border-t-2 flex justify-between items-center rounded-t-none">
                         <input
                             onChange={(event) => { setCurrentMessage(event.target.value) }}
                             type="text"
+                            value={currentMessage}
                             className="text-black"
-                            placeholder="Type Here..." />
+                            placeholder="Type Here..."
+                            onKeyDown={(event) => {
+                                event.key === "Enter" && sendMessage();
+                            }}
+                        />
                         <button onClick={sendMessage} className="btn btn-square -mr-4 rounded-t-none rounded-bl-none">
                             <FontAwesomeIcon icon={faPaperPlane} />
                         </button>
