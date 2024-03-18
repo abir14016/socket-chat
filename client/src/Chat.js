@@ -4,12 +4,20 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import { useQuery } from 'react-query';
 
 library.add(fab, faPaperPlane)
 
 const Chat = ({ socket, userName, room }) => {
+    const { isLoading, data: users, refetch } = useQuery('users', () =>
+        fetch(`http://localhost:3001/room/${room}/users`).then(res =>
+            res.json()
+        )
+    )
+
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
+
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -31,7 +39,12 @@ const Chat = ({ socket, userName, room }) => {
             //listening event that emitted from backend
             setMessageList((list) => [...list, data]);
         })
-    }, [socket])
+    }, [socket]);
+
+    if (isLoading) {
+        return <p>Loading....</p>
+    }
+    console.log(users)
 
     return (
         <div className="flex justify-center items-center h-screen">
