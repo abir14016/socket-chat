@@ -46,7 +46,7 @@ const Chat = ({ socket, userName, room }) => {
                     {messageList.map((messageContent, index) => {
                         const isCurrentUser = messageContent.author === userName;
                         const chatClass = isCurrentUser ? "chat chat-end" : "chat chat-start";
-                        const bubbleClass = isCurrentUser ? "chat-bubble bg-blue-600 max-w-48 overflow-hidden break-all" : "chat-bubble bg-gray-300 max-w-48 text-black overflow-hidden break-all";
+                        const bubbleClass = isCurrentUser ? "chat-bubble bg-blue-600 max-w-44 overflow-hidden break-all" : "chat-bubble bg-gray-300 max-w-44 text-black overflow-hidden break-all";
 
                         return (
                             <div className={chatClass} key={index}>
