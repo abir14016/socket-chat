@@ -13,7 +13,7 @@ function App() {
   const [showChat, setShowChat] = useState(false);
 
   const onSubmit = (data) => {
-    socket.emit("join_room", data.room);
+    socket.emit("join_room", data);
     setUserName(data.userName); // Set userName state
     setRoom(data.room); // Set room state
     reset();
