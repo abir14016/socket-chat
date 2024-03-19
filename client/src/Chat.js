@@ -5,7 +5,8 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { useQuery } from 'react-query';
-import AvatarGroup from './components/AvatarGroup';
+import Avatar from './components/Avatar';
+import Spinner from './components/Spinner';
 
 library.add(fab, faPaperPlane)
 
@@ -43,10 +44,10 @@ const Chat = ({ socket, userName, room }) => {
     }, [socket]);
 
     if (isLoading) {
-        return <p>Loading....</p>
+        return (<div className='flex justify-center items-center h-screen'>
+            <Spinner />
+        </div>)
     }
-    console.log(users);
-    console.log(users.length);
 
     return (
         <div className="flex justify-center items-center h-screen">
@@ -56,13 +57,14 @@ const Chat = ({ socket, userName, room }) => {
                     <div className='border-2 bg-gray-400 rounded-xl flex justify-between items-center px-2'>
                         <div className="avatar-group -space-x-3 rtl:space-x-reverse">
                             {
-                                users.map((user) => <AvatarGroup
+                                users.map((user) => <Avatar
                                     key={user.userId}
                                     user={user}
+                                    isLoading={isLoading}
                                 // refetch={refetch}
                                 // users={users}
                                 >
-                                </AvatarGroup>)
+                                </Avatar>)
                             }
                         </div>
                         <div className="badge badge-warning">room: {room}</div>
@@ -98,7 +100,7 @@ const Chat = ({ socket, userName, room }) => {
                             }}
                         />
                         <button onClick={sendMessage} className="btn btn-square -mr-4 rounded-t-none rounded-bl-none">
-                            <FontAwesomeIcon icon={faPaperPlane} />
+                            <FontAwesomeIcon className='text-secondary' icon={faPaperPlane} />
                         </button>
                     </label>
                 </div>
