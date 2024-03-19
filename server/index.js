@@ -67,6 +67,8 @@ app.get("/room/:room/users", (req, res) => {
     const room = req.params.room;
     const users = usersInRooms[room];
 
+    console.log(users);
+
     // Check if the room exists
     if (users === undefined) {
         // Room does not exist, send an error response

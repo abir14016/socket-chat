@@ -5,11 +5,12 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { useQuery } from 'react-query';
+import AvatarGroup from './components/AvatarGroup';
 
 library.add(fab, faPaperPlane)
 
 const Chat = ({ socket, userName, room }) => {
-    const { isLoading, data: users, refetch } = useQuery('users', () =>
+    const { isLoading, data: users } = useQuery('users', () =>
         fetch(`http://localhost:3001/room/${room}/users`).then(res =>
             res.json()
         )
@@ -44,15 +45,27 @@ const Chat = ({ socket, userName, room }) => {
     if (isLoading) {
         return <p>Loading....</p>
     }
-    console.log(users)
+    console.log(users);
+    console.log(users.length);
 
     return (
         <div className="flex justify-center items-center h-screen">
             <div className='border-2 w-full md:w-1/2 lg:w-1/5 h-full md:h-2/3 lg:h-2/3 flex flex-col rounded-xl'>
                 <div className='bg-neutral p-3 rounded-t-xl rounded-b-none relative'>
                     <h2 className='text-white font-bold text-2xl'>Live Chat</h2>
-                    <div className="absolute top-0 right-0 mt-2 mr-2">
-                        <div className="badge badge-info">room: {room}</div>
+                    <div className='border-2 bg-gray-400 rounded-xl flex justify-between items-center px-2'>
+                        <div className="avatar-group -space-x-3 rtl:space-x-reverse">
+                            {
+                                users.map((user) => <AvatarGroup
+                                    key={user.userId}
+                                    user={user}
+                                // refetch={refetch}
+                                // users={users}
+                                >
+                                </AvatarGroup>)
+                            }
+                        </div>
+                        <div className="badge badge-warning">room: {room}</div>
                     </div>
                 </div>
                 <ScrollToBottom className="flex-1 overflow-y-auto">
