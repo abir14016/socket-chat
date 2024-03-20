@@ -7,6 +7,7 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 import { useQuery } from 'react-query';
 import Avatar from './components/Avatar';
 import Spinner from './components/Spinner';
+import Placeholder from './components/Placeholder';
 
 library.add(fab, faPaperPlane)
 
@@ -44,9 +45,11 @@ const Chat = ({ socket, userName, room }) => {
     }, [socket]);
 
     if (isLoading) {
-        return (<div className='flex justify-center items-center h-screen'>
-            <Spinner />
-        </div>)
+        return (
+            <div className='flex justify-center items-center h-screen'>
+                <Spinner />
+            </div>
+        )
     }
 
     return (
@@ -55,18 +58,38 @@ const Chat = ({ socket, userName, room }) => {
                 <div className='bg-neutral p-3 rounded-t-xl rounded-b-none relative'>
                     <h2 className='text-white font-bold text-2xl'>Live Chat</h2>
                     <div className='border-2 bg-gray-400 rounded-xl flex justify-between items-center px-2'>
-                        <div className="avatar-group -space-x-3 rtl:space-x-reverse">
-                            {
-                                users.map((user) => <Avatar
-                                    key={user.userId}
-                                    user={user}
-                                    isLoading={isLoading}
-                                // refetch={refetch}
-                                // users={users}
-                                >
-                                </Avatar>)
-                            }
-                        </div>
+                        {
+                            users.length > 3 ? (
+                                <div className="avatar-group -space-x-3 rtl:space-x-reverse">
+                                    {
+                                        users.slice(0, 3).map((user) => <Avatar
+                                            key={user.userId}
+                                            user={user}
+                                            isLoading={isLoading}
+                                        // refetch={refetch}
+                                        // users={users}
+                                        >
+                                        </Avatar>)
+                                    }
+
+                                    {/* avatar placeholder component */}
+                                    <Placeholder length={users.length - 3}></Placeholder>
+                                </div>
+                            ) : (
+                                <div className="avatar-group -space-x-3 rtl:space-x-reverse">
+                                    {
+                                        users.map((user) => <Avatar
+                                            key={user.userId}
+                                            user={user}
+                                            isLoading={isLoading}
+                                        // refetch={refetch}
+                                        // users={users}
+                                        >
+                                        </Avatar>)
+                                    }
+                                </div>
+                            )
+                        }
                         <div className="badge badge-warning">room: {room}</div>
                     </div>
                 </div>
