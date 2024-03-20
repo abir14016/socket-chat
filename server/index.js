@@ -30,6 +30,15 @@ io.on("connection", (socket) => {
         socket.join(room);
         console.log(`User: ${userName} connected with id: ${socket.id} and joined room: ${room}`);
 
+        // Emit a message to inform other users about the new user
+        const joinMessageData = {
+            room: room,
+            author: "system",
+            message: `${userName} has joined the room.`,
+            time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
+        }
+        socket.to(room).emit("user_join_message", joinMessageData);
+
         // Add user to the room
         if (!usersInRooms[room]) {
             usersInRooms[room] = [];

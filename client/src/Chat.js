@@ -22,6 +22,12 @@ const Chat = ({ socket, userName, room }) => {
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
 
+    useEffect(() => {
+        socket.on("user_join_message", (data) => {
+            setMessageList((list) => [...list, data]);
+        });
+    }, [socket]);
+
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -99,17 +105,32 @@ const Chat = ({ socket, userName, room }) => {
                 </div>
                 <ScrollToBottom className="flex-1 overflow-y-auto">
                     {messageList.map((messageContent, index) => {
+                        const isSystemMessage = messageContent.author === "system";
                         const isCurrentUser = messageContent.author === userName;
                         const chatClass = isCurrentUser ? "chat chat-end" : "chat chat-start";
                         const bubbleClass = isCurrentUser ? "chat-bubble bg-blue-600 max-w-44 overflow-hidden break-all" : "chat-bubble bg-gray-300 max-w-44 text-black overflow-hidden break-all";
 
                         return (
-                            <div className={chatClass} key={index}>
-                                <div className={bubbleClass}>{messageContent.message}</div>
-                                <div className="chat-footer font-bold opacity-50">
-                                    {messageContent.author}
-                                    <time className="text-xs opacity-50 ml-1">{messageContent.time}</time>
-                                </div>
+                            <div>
+                                {
+                                    !isSystemMessage ? (
+                                        <div className={chatClass} key={index}>
+                                            <div className={bubbleClass}>{messageContent.message}</div>
+                                            <div className="chat-footer font-bold opacity-50">
+                                                {messageContent.author}
+                                                <time className="text-xs opacity-50 ml-1">{messageContent.time}</time>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div key={index}>
+                                            <div className='flex justify-center items-center'>
+                                                <p className='text-sm text-gray-500'>{messageContent.message}</p>
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </div>
+                                            <p className='text-xs text-center text-gray-700 font semibond'>{messageContent.time}</p>
+                                        </div>
+                                    )
+                                }
                             </div>
                         );
                     })}
