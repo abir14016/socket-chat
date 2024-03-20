@@ -93,7 +93,7 @@ const Chat = ({ socket, userName, room }) => {
                         }
                         <div
                             onClick={() => document.getElementById('all_Users_modal').showModal()}
-                            className="badge badge-warning cursor-pointer w-20">room: {room}
+                            className="badge badge-secondary hover:badge-neutral cursor-pointer w-20">room: {room}
                         </div>
                     </div>
                 </div>
