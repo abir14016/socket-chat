@@ -8,6 +8,7 @@ import { useQuery } from 'react-query';
 import Avatar from './components/Avatar';
 import Spinner from './components/Spinner';
 import Placeholder from './components/Placeholder';
+import Modal from './components/Modal';
 
 library.add(fab, faPaperPlane)
 
@@ -90,7 +91,9 @@ const Chat = ({ socket, userName, room }) => {
                                 </div>
                             )
                         }
-                        <div className="badge badge-warning">room: {room}</div>
+                        <div
+                            onClick={() => document.getElementById('all_Users_modal').showModal()}
+                            className="badge badge-warning cursor-pointer">room: {room}</div>
                     </div>
                 </div>
                 <ScrollToBottom className="flex-1 overflow-y-auto">
@@ -123,11 +126,12 @@ const Chat = ({ socket, userName, room }) => {
                             }}
                         />
                         <button onClick={sendMessage} className="btn btn-square -mr-4 rounded-t-none rounded-bl-none">
-                            <FontAwesomeIcon className='text-secondary' icon={faPaperPlane} />
+                            <FontAwesomeIcon className='text-secondary rotate-45' icon={faPaperPlane} />
                         </button>
                     </label>
                 </div>
             </div>
+            <Modal users={users} room={room}></Modal>
         </div>
 
     );
