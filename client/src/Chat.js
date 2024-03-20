@@ -61,7 +61,7 @@ const Chat = ({ socket, userName, room }) => {
                     <div className='border-2 bg-gray-400 rounded-xl flex justify-between items-center px-2'>
                         {
                             users.length > 3 ? (
-                                <div className="avatar-group -space-x-3 rtl:space-x-reverse">
+                                <div className="overflow-auto avatar-group -space-x-3 rtl:space-x-reverse">
                                     {
                                         users.slice(0, 3).map((user) => <Avatar
                                             key={user.userId}
@@ -74,7 +74,7 @@ const Chat = ({ socket, userName, room }) => {
                                     }
 
                                     {/* avatar placeholder component */}
-                                    <Placeholder length={users.length - 3}></Placeholder>
+                                    <Placeholder users={users} length={users.length - 3}></Placeholder>
                                 </div>
                             ) : (
                                 <div className="avatar-group -space-x-3 rtl:space-x-reverse">
@@ -93,7 +93,8 @@ const Chat = ({ socket, userName, room }) => {
                         }
                         <div
                             onClick={() => document.getElementById('all_Users_modal').showModal()}
-                            className="badge badge-warning cursor-pointer">room: {room}</div>
+                            className="badge badge-warning cursor-pointer w-20">room: {room}
+                        </div>
                     </div>
                 </div>
                 <ScrollToBottom className="flex-1 overflow-y-auto">

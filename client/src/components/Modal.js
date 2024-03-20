@@ -21,7 +21,7 @@ const Modal = ({ users, room }) => {
                         <tbody>
                             {
                                 users.map((user, index) => (
-                                    <tr>
+                                    <tr key={user.userId}>
                                         <th>{index + 1}</th>
                                         <td>{user.userName}</td>
                                         <td>{user.userId}</td>
