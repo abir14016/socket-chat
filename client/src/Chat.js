@@ -9,6 +9,7 @@ import Avatar from './components/Avatar';
 import Spinner from './components/Spinner';
 import Placeholder from './components/Placeholder';
 import Modal from './components/Modal';
+import { toast } from 'react-toastify';
 
 library.add(fab, faPaperPlane)
 
@@ -25,6 +26,10 @@ const Chat = ({ socket, userName, room }) => {
     useEffect(() => {
         socket.on("user_join_message", (data) => {
             setMessageList((list) => [...list, data]);
+            // Show a toast when a new user joins
+            toast(`${data.message}`, {
+                type: "info",
+            });
         });
     }, [socket]);
 
