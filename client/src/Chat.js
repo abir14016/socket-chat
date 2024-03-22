@@ -11,6 +11,8 @@ import Placeholder from './components/Placeholder';
 import Modal from './components/Modal';
 import { toast } from 'react-toastify';
 import notificationSound from './assets/audios/notification.mp3';
+import chatSound from './assets/audios/chat.mp3';
+import bubbleSound from './assets/audios/bubble.wav';
 
 library.add(fab, faPaperPlane)
 
@@ -49,6 +51,8 @@ const Chat = ({ socket, userName, room }) => {
             //message sent to the backend
             await socket.emit("send_message", messageData);
             setMessageList((list) => [...list, messageData]);
+            const audio = new Audio(bubbleSound);
+            audio.play();
             setCurrentMessage("");
         }
     }
@@ -57,6 +61,8 @@ const Chat = ({ socket, userName, room }) => {
         socket.on("receive_message", (data) => {
             //listening event that emitted from backend
             setMessageList((list) => [...list, data]);
+            const audio = new Audio(chatSound);
+            audio.play();
         })
     }, [socket]);
 
