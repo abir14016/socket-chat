@@ -10,6 +10,7 @@ import Spinner from './components/Spinner';
 import Placeholder from './components/Placeholder';
 import Modal from './components/Modal';
 import { toast } from 'react-toastify';
+import notificationSound from './assets/audios/notification.mp3';
 
 library.add(fab, faPaperPlane)
 
@@ -30,6 +31,9 @@ const Chat = ({ socket, userName, room }) => {
             toast(`${data.message}`, {
                 type: "info",
             });
+
+            const audio = new Audio(notificationSound);
+            audio.play();
         });
     }, [socket]);
 
