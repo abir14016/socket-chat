@@ -196,16 +196,32 @@ const Chat = ({ socket, userName, room }) => {
                             </div>
                         );
                     })}
+                    {
+                        typingUsers.length > 0 && (
+                            <div>
+                                <div className="chat chat-start">
+                                    <div className="chat-bubble chat-bubble-primary bg-gray-300 text-black"><span className="loading loading-dots loading-xs"></span></div>
+                                    <div className='chat-footer'>
+                                        <div className='avatar-group -space-x-3 rtl:space-x-reverse'>
+                                            {
+                                                typingUsers.map((user, index) => (
+                                                    <div key={index} className="avatar online placeholder cursor-pointer">
+                                                        <div
+                                                            className="bg-neutral text-neutral-content rounded-full w-4 hover:bg-secondary"
+                                                            title={user.userName} // Display full name on hover
+                                                        >
+                                                            <span className="text-xs">{user.userName?.slice(0, 1).toUpperCase()}</span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
                 </ScrollToBottom>
-                {
-                    typingUsers.length > 0 && (
-                        <div>
-                            {
-                                typingUsers.map((user) => <p>{user.userName} is typing...</p>)
-                            }
-                        </div>
-                    )
-                }
                 <div>
                     <label className="input input-bordered border-t-2 flex justify-between items-center rounded-t-none">
                         <input
