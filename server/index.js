@@ -49,6 +49,14 @@ io.on("connection", (socket) => {
         io.to(room).emit("user_list", usersInRooms[room]);
     });
 
+    socket.on("start_typing", (data) => {
+        socket.to(data.room).emit("display_start_typing", data);
+    });
+
+    socket.on("stop_typing", (data) => {
+        socket.to(data.room).emit("display_stop_typing", data);
+    });
+
     socket.on("send_message", (data) => {
         socket.to(data.room).emit("receive_message", data);//send the message to the room
     });

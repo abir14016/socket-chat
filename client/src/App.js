@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react"; // Import useState
 import Chat from './Chat';
 import { ToastContainer } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 const socket = io.connect("http://localhost:3001");
 

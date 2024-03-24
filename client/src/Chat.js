@@ -25,6 +25,47 @@ const Chat = ({ socket, userName, room }) => {
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
+    const [typingUsers, setTypingUsers] = useState([]);
+
+
+    const handleFocus = (event) => {
+        if (event.key !== "Enter") {
+            socket.emit("start_typing", { userName, room });
+        }
+    };
+
+    const handleBlur = () => {
+        socket.emit("stop_typing", { userName, room });
+    };
+
+    useEffect(() => {
+        const handleStartTyping = (data) => {
+            const isUserTyping = typingUsers.some(user => user.userName === data.userName && user.room === data.room);
+            if (!isUserTyping) {
+                setTypingUsers((list) => [...list, data]);
+            }
+        };
+
+        socket.on("display_start_typing", handleStartTyping);
+
+        return () => {
+            socket.off("display_start_typing", handleStartTyping);
+        };
+    }, [socket, typingUsers]);
+
+    useEffect(() => {
+        const handleStopTyping = (data) => {
+            const currentTypingUsers = typingUsers.filter(user => !(user.userName === data.userName && user.room === data.room));
+            setTypingUsers(currentTypingUsers);
+        };
+
+        socket.on("display_stop_typing", handleStopTyping);
+
+        return () => {
+            socket.off("display_stop_typing", handleStopTyping);
+        };
+    }, [socket, typingUsers]);
+
 
     useEffect(() => {
         socket.on("user_join_message", (data) => {
@@ -38,6 +79,7 @@ const Chat = ({ socket, userName, room }) => {
             audio.play();
         });
     }, [socket]);
+
 
 
     const sendMessage = async () => {
@@ -150,6 +192,15 @@ const Chat = ({ socket, userName, room }) => {
                         );
                     })}
                 </ScrollToBottom>
+                {
+                    typingUsers.length > 0 && (
+                        <div>
+                            {
+                                typingUsers.map((user) => <p>{user.userName} is typing...</p>)
+                            }
+                        </div>
+                    )
+                }
                 <div>
                     <label className="input input-bordered border-t-2 flex justify-between items-center rounded-t-none">
                         <input
@@ -158,6 +209,8 @@ const Chat = ({ socket, userName, room }) => {
                             value={currentMessage}
                             className="text-black"
                             placeholder="Type Here..."
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
                             onKeyDown={(event) => {
                                 event.key === "Enter" && sendMessage();
                             }}
