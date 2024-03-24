@@ -28,15 +28,14 @@ const Chat = ({ socket, userName, room }) => {
     const [typingUsers, setTypingUsers] = useState([]);
 
 
-    const handleFocus = (event) => {
-        if (event.key !== "Enter") {
-            socket.emit("start_typing", { userName, room });
-        }
+    const handleFocus = () => {
+        socket.emit("start_typing", { userName, room });
     };
 
     const handleBlur = () => {
         socket.emit("stop_typing", { userName, room });
     };
+
 
     useEffect(() => {
         const handleStartTyping = (data) => {
@@ -108,6 +107,16 @@ const Chat = ({ socket, userName, room }) => {
         })
     }, [socket]);
 
+
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            sendMessage();
+            handleBlur();
+        } else {
+            handleFocus();
+        }
+    }
+
     if (isLoading) {
         return (
             <div className='flex justify-center items-center h-screen'>
@@ -130,8 +139,6 @@ const Chat = ({ socket, userName, room }) => {
                                             key={user.userId}
                                             user={user}
                                             isLoading={isLoading}
-                                        // refetch={refetch}
-                                        // users={users}
                                         >
                                         </Avatar>)
                                     }
@@ -146,8 +153,6 @@ const Chat = ({ socket, userName, room }) => {
                                             key={user.userId}
                                             user={user}
                                             isLoading={isLoading}
-                                        // refetch={refetch}
-                                        // users={users}
                                         >
                                         </Avatar>)
                                     }
@@ -211,9 +216,7 @@ const Chat = ({ socket, userName, room }) => {
                             placeholder="Type Here..."
                             onFocus={handleFocus}
                             onBlur={handleBlur}
-                            onKeyDown={(event) => {
-                                event.key === "Enter" && sendMessage();
-                            }}
+                            onKeyDown={handleKeyDown}
                         />
                         <button onClick={sendMessage} className="btn btn-square -mr-4 rounded-t-none rounded-bl-none">
                             <FontAwesomeIcon className='text-secondary rotate-45' icon={faPaperPlane} />
