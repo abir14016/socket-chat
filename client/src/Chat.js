@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import notificationSound from './assets/audios/notification.mp3';
 import chatSound from './assets/audios/chat.mp3';
 import bubbleSound from './assets/audios/bubble.wav';
+import typingSound from './assets/audios/typing.mp3';
 
 library.add(fab, faPaperPlane)
 
@@ -26,7 +27,34 @@ const Chat = ({ socket, userName, room }) => {
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
     const [typingUsers, setTypingUsers] = useState([]);
+    const [isTyping, setIsTyping] = useState(false);
+    const [typingAudio, setTypingAudio] = useState(null);
 
+    useEffect(() => {
+        setTypingAudio(new Audio(typingSound));
+
+        // Clean up audio when component unmounts
+        return () => {
+            if (typingAudio) {
+                typingAudio.pause();
+                typingAudio.currentTime = 0;
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (typingAudio) {
+            if (isTyping) {
+                typingAudio.loop = true;
+                typingAudio.play();
+            } else {
+                typingAudio.loop = false;
+                typingAudio.pause();
+                typingAudio.currentTime = 0;
+            }
+        }
+    }, [isTyping, typingAudio]);
 
     const handleFocus = () => {
         socket.emit("start_typing", { userName, room });
@@ -36,12 +64,12 @@ const Chat = ({ socket, userName, room }) => {
         socket.emit("stop_typing", { userName, room });
     };
 
-
     useEffect(() => {
         const handleStartTyping = (data) => {
             const isUserTyping = typingUsers.some(user => user.userName === data.userName && user.room === data.room);
             if (!isUserTyping) {
                 setTypingUsers((list) => [...list, data]);
+                setIsTyping(true)
             }
         };
 
@@ -56,6 +84,7 @@ const Chat = ({ socket, userName, room }) => {
         const handleStopTyping = (data) => {
             const currentTypingUsers = typingUsers.filter(user => !(user.userName === data.userName && user.room === data.room));
             setTypingUsers(currentTypingUsers);
+            setIsTyping(currentTypingUsers.length > 0); // Update isTyping based on currentTypingUsers length
         };
 
         socket.on("display_stop_typing", handleStopTyping);
@@ -172,8 +201,11 @@ const Chat = ({ socket, userName, room }) => {
                         const chatClass = isCurrentUser ? "chat chat-end" : "chat chat-start";
                         const bubbleClass = isCurrentUser ? "chat-bubble bg-blue-600 max-w-44 overflow-hidden break-all" : "chat-bubble bg-gray-300 max-w-44 text-black overflow-hidden break-all";
 
+
+
+
                         return (
-                            <div>
+                            <div key={index}>
                                 {
                                     !isSystemMessage ? (
                                         <div className={chatClass} key={index}>
