@@ -12,15 +12,18 @@ function App() {
   const { register, formState: { errors }, handleSubmit, reset } = useForm();
   const [userName, setUserName] = useState(""); // State for userName
   const [room, setRoom] = useState(""); // State for room
+  const [gender, setGender] = useState(""); // State for gender
   const [showChat, setShowChat] = useState(false);
 
   const onSubmit = (data) => {
     socket.emit("join_room", data);
     setUserName(data.userName); // Set userName state
     setRoom(data.room); // Set room state
+    setGender(data.gender);
     reset();
     setShowChat(true);
   }
+
 
   return (
     <div className="App">
@@ -75,6 +78,31 @@ function App() {
                 </div>
                 {/* room field */}
 
+                {/* gender field */}
+                <div className="form-control w-full max-w-xs">
+                  <label className="label">
+                    <span className="label-text text-white">Gender</span>
+                  </label>
+                  <select
+                    defaultValue="Male"
+                    defaultChecked
+                    className="text-black select select-bordered"
+                    {...register("gender", {
+                      required: {
+                        value: true,
+                        message: 'you must select a gender'
+                      }
+                    })}
+                  >
+                    <option>Male</option>
+                    <option>Female</option>
+                  </select>
+                  <label className="label">
+                    {errors.gender?.type === 'required' && <span className="label-text-alt text-error">{errors.gender.message}</span>}
+                  </label>
+                </div>
+                {/* gender field */}
+
                 <div className="card-actions justify-end">
                   <input className="btn btn-outline btn-secondary" type="submit" value="Join a room" />
                 </div>
@@ -84,7 +112,7 @@ function App() {
           </div>
         </div>)
         :
-        (<Chat socket={socket} userName={userName} room={room} />)
+        (<Chat socket={socket} userName={userName} room={room} gender={gender} />)
       }
       <ToastContainer />
     </div>
