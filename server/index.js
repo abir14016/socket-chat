@@ -20,13 +20,26 @@ const io = new Server(server, {
     }
 });
 
+const generateAvatar = (userNeme, gender) => {
+    const lowerCaseUserName = userNeme.toLowerCase();
+    let avatarURL
+    if (gender === "Male") {
+        avatarURL = `https://avatar.iran.liara.run/public/boy?username=${lowerCaseUserName}`;
+    } else if (gender === "Female") {
+        avatarURL = `https://avatar.iran.liara.run/public/girl?username=${lowerCaseUserName}`;
+    } else {
+        avatarURL = "";
+    }
+    return avatarURL
+}
+
 // Data structure to store users in rooms
 const usersInRooms = {};
 
 io.on("connection", (socket) => {
     socket.on("join_room", (data) => {
         const userId = socket.id;
-        const { room, userName } = data;
+        const { room, userName, gender } = data;
         socket.join(room);
         console.log(`User: ${userName} connected with id: ${socket.id} and joined room: ${room}`);
 
@@ -38,12 +51,12 @@ io.on("connection", (socket) => {
             time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
         }
         socket.to(room).emit("user_join_message", joinMessageData);
-
+        const imgURL = generateAvatar(userName, gender);
         // Add user to the room
         if (!usersInRooms[room]) {
             usersInRooms[room] = [];
         }
-        usersInRooms[room].push({ userName, userId });
+        usersInRooms[room].push({ userName, userId, imgURL });
 
         // Emit event to update user list in the room
         io.to(room).emit("user_list", usersInRooms[room]);
@@ -69,8 +82,6 @@ io.on("connection", (socket) => {
                 const index = usersInRooms[room].findIndex(user => user.userId === socket.id);
                 if (index !== -1) {
                     usersInRooms[room].splice(index, 1);
-
-                    console.log(usersInRooms)
                     // Emit event to update user list in the room
                     io.to(room).emit("user_list", usersInRooms[room]);
                 }
@@ -83,8 +94,6 @@ io.on("connection", (socket) => {
 app.get("/room/:room/users", (req, res) => {
     const room = req.params.room;
     const users = usersInRooms[room];
-
-    console.log(users);
 
     // Check if the room exists
     if (users === undefined) {

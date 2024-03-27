@@ -12,14 +12,14 @@ function App() {
   const { register, formState: { errors }, handleSubmit, reset } = useForm();
   const [userName, setUserName] = useState(""); // State for userName
   const [room, setRoom] = useState(""); // State for room
-  const [gender, setGender] = useState(""); // State for gender
   const [showChat, setShowChat] = useState(false);
+
+
 
   const onSubmit = (data) => {
     socket.emit("join_room", data);
     setUserName(data.userName); // Set userName state
     setRoom(data.room); // Set room state
-    setGender(data.gender);
     reset();
     setShowChat(true);
   }
@@ -137,7 +137,7 @@ function App() {
           </div>
         </div>)
         :
-        (<Chat socket={socket} userName={userName} room={room} gender={gender} />)
+        (<Chat socket={socket} userName={userName} room={room} />)
       }
       <ToastContainer />
     </div>
