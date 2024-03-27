@@ -79,29 +79,54 @@ function App() {
                 {/* room field */}
 
                 {/* gender field */}
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control">
                   <label className="label">
-                    <span className="label-text text-white">Gender</span>
+                    <span className="label-text text-white">Select your gender</span>
                   </label>
-                  <select
-                    defaultValue="Male"
-                    defaultChecked
-                    className="text-black select select-bordered"
-                    {...register("gender", {
-                      required: {
-                        value: true,
-                        message: 'you must select a gender'
-                      }
-                    })}
-                  >
-                    <option>Male</option>
-                    <option>Female</option>
-                  </select>
+                  <div className="flex justify-start items-center">
+                    <div className="form-control">
+                      <label className="label cursor-pointer">
+                        <span className="label-text text-white">Male</span>
+                        <input
+                          type="radio"
+                          name="gender"
+                          className="radio radio-secondary"
+                          value="Male"
+                          defaultChecked
+                          {...register("gender", {
+                            required: {
+                              value: true,
+                              message: "You must select a gender"
+                            }
+                          })}
+                        />
+                      </label>
+                    </div>
+                    <div className="form-control ml-2">
+                      <label className="label cursor-pointer">
+                        <span className="label-text text-white">Female</span>
+                        <input
+                          type="radio"
+                          name="gender"
+                          className="radio radio-secondary"
+                          value="Female"
+                          {...register("gender", {
+                            required: {
+                              value: true,
+                              message: "You must select a gender"
+                            }
+                          })}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  {/* Display error message if gender field is not filled */}
                   <label className="label">
                     {errors.gender?.type === 'required' && <span className="label-text-alt text-error">{errors.gender.message}</span>}
                   </label>
                 </div>
                 {/* gender field */}
+
 
                 <div className="card-actions justify-end">
                   <input className="btn btn-outline btn-secondary" type="submit" value="Join a room" />
