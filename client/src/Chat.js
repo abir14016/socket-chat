@@ -17,7 +17,7 @@ import typingSound from './assets/audios/typing.mp3';
 
 library.add(fab, faPaperPlane)
 
-const Chat = ({ socket, userName, room }) => {
+const Chat = ({ socket, userName, room, gender }) => {
     const { isLoading, data: users } = useQuery('users', () =>
         fetch(`http://localhost:3001/room/${room}/users`).then(res =>
             res.json()
@@ -30,9 +30,25 @@ const Chat = ({ socket, userName, room }) => {
     const [isTyping, setIsTyping] = useState(false);
     const [typingAudio, setTypingAudio] = useState(null);
 
+
+    const generateAvatar = (userNeme, gender) => {
+        const lowerCaseUserName = userNeme.toLowerCase();
+        let avatarURL
+        if (gender === "Male") {
+            avatarURL = `https://avatar.iran.liara.run/public/boy?username=[${lowerCaseUserName}]`;
+        } else if (gender === "Female") {
+            avatarURL = `https://avatar.iran.liara.run/public/girl?username=[${lowerCaseUserName}]`;
+        } else {
+            avatarURL = "";
+        }
+        return avatarURL
+    }
+
+    const avatarImageURL = generateAvatar(userName, gender);
+    console.log(avatarImageURL);
+
     useEffect(() => {
         setTypingAudio(new Audio(typingSound));
-
         // Clean up audio when component unmounts
         return () => {
             if (typingAudio) {
